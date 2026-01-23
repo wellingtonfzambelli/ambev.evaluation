@@ -90,12 +90,13 @@ public sealed class Sale : BaseEntity
         UpdateAt = DateTime.UtcNow;
     }
 
-    public void CancelStatus()
+    public bool CancelStatus()
     {
         if (SaleStatus == SaleStatus.Canceled)
-            return;
+            return false;
 
         SaleStatus = SaleStatus.Canceled;
         UpdateAt = DateTime.UtcNow;
+        return true;
     }
 }

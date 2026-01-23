@@ -1,8 +1,10 @@
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
@@ -72,8 +74,17 @@ public sealed class SalesController : BaseController
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var command = _mapper.Map<GetSaleQuery>(request.Id);
-        var response = await _mediator.Send(command, cancellationToken);
+        GetSaleResult response;
+
+        try
+        {
+            var command = _mapper.Map<GetSaleQuery>(request.Id);
+            response = await _mediator.Send(command, cancellationToken);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
 
         return Ok(new ApiResponseWithData<GetSaleResponse>
         {
@@ -126,27 +137,36 @@ public sealed class SalesController : BaseController
         });
     }
 
-    //[HttpPost("{id}/cancel")]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> CancelSale(
-    //    [FromRoute] Guid id,
-    //    CancellationToken cancellationToken)
-    //{
-    //    var request = new CancelSaleRequest { Id = id };
-    //    var validator = new CancelSaleRequestValidator();
-    //    var validationResult = await validator.ValidateAsync(request, cancellationToken);
+    [HttpPost("{id}/cancel")]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CancelSaleAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        var request = new CancelSaleRequest { Id = id };
+        var validator = new CancelSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-    //    if (!validationResult.IsValid)
-    //        return BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
 
-    //    var command = _mapper.Map<CancelSaleCommand>(request.Id);
-    //    await _mediator.Send(command, cancellationToken);
+        try
+        {
+            var command = _mapper.Map<CancelSaleCommand>(request.Id);
+            await _mediator.Send(command, cancellationToken);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
 
-    //    return Ok(new ApiResponse
-    //    {
-    //        Success = true,
-    //        Message = "Sale cancelled successfully"
-    //    });
-    //}
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "Sale cancelled successfully"
+        });
+    }
 }
