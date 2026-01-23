@@ -1,8 +1,10 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 using AutoMapper;
@@ -30,7 +32,7 @@ public sealed class SalesController : BaseController
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateSaleResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateSale
+    public async Task<IActionResult> CreateSaleAsync
     (
         [FromBody] CreateSaleRequest request,
         CancellationToken cancellationToken
@@ -53,35 +55,37 @@ public sealed class SalesController : BaseController
         });
     }
 
-    //[HttpGet("{id}")]
-    //[ProducesResponseType(typeof(ApiResponseWithData<GetSaleResponse>), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    //public async Task<IActionResult> GetSale(
-    //    [FromRoute] Guid id,
-    //    CancellationToken cancellationToken)
-    //{
-    //    var request = new GetSaleRequest { Id = id };
-    //    var validator = new GetSaleRequestValidator();
-    //    var validationResult = await validator.ValidateAsync(request, cancellationToken);
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetSaleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSaleAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        var request = new GetSaleRequest { Id = id };
+        var validator = new GetSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-    //    if (!validationResult.IsValid)
-    //        return BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
 
-    //    var command = _mapper.Map<GetSaleQuery>(request.Id);
-    //    var response = await _mediator.Send(command, cancellationToken);
+        var command = _mapper.Map<GetSaleQuery>(request.Id);
+        var response = await _mediator.Send(command, cancellationToken);
 
-    //    return Ok(new ApiResponseWithData<GetSaleResponse>
-    //    {
-    //        Success = true,
-    //        Message = "Sale retrieved successfully",
-    //        Data = _mapper.Map<GetSaleResponse>(response)
-    //    });
-    //}
+        return Ok(new ApiResponseWithData<GetSaleResponse>
+        {
+            Success = true,
+            Message = "Sale retrieved successfully",
+            Data = _mapper.Map<GetSaleResponse>(response)
+        });
+    }
 
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponseWithData<IEnumerable<ListSalesResponse>>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListSales(CancellationToken cancellationToken)
+    public async Task<IActionResult> ListSalesAsync(CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new ListSalesQuery(), cancellationToken);
 
@@ -97,7 +101,7 @@ public sealed class SalesController : BaseController
     [HttpPatch("{saleId}/SaleItem")]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ReplaceSaleItems
+    public async Task<IActionResult> ReplaceSaleItemsAync
     (
         [FromRoute] Guid saleId,
         [FromBody] UpdateSaleRequest request,
