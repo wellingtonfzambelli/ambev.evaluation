@@ -40,6 +40,10 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         CancellationToken cancellationToken
     )
     {
+        var idempotencyKey = SalesCacheKeys.Idempotency(command.SaleNumber);
+        if (!string.IsNullOrWhiteSpace(await _cache.GetStringAsync(idempotencyKey, cancellationToken)))
+            throw new InvalidOperationException("Duplicate request is not allowed. Please wait 5 minutes.");
+
         var validationResult = new CreateSaleCommandValidator().Validate(command);
 
         if (!validationResult.IsValid)
@@ -77,6 +81,12 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
                 item.UnitPrice
             );
         }
+
+        await _cache.SetStringAsync(
+            idempotencyKey,
+            "1",
+            new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) },
+            cancellationToken);
 
         await _saleRepository.CreateAsync(sale, cancellationToken);
         await _cache.RemoveAsync(SalesCacheKeys.All, cancellationToken);
