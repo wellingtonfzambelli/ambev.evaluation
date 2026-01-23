@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.ORM.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,5 +15,7 @@ public sealed class BranchConfiguration : IEntityTypeConfiguration<Branch>
         builder.Property(u => u.Id).HasColumnType("uuid").HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(u => u.Name).HasColumnType<string>("varchar(50)").IsRequired().HasMaxLength(50);
+
+        builder.HasData(BranchSeed.Data);
     }
 }

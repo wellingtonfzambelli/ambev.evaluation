@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.ORM.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,5 +16,7 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(u => u.Name).HasColumnType<string>("varchar(100)").IsRequired().HasMaxLength(100);
         builder.Property(u => u.Price).HasColumnType<decimal>("decimal(18,2)").IsRequired();
+
+        builder.HasData(ProductSeed.Data);
     }
 }

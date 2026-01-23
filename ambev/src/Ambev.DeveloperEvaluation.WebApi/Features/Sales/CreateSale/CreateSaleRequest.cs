@@ -1,9 +1,9 @@
-﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 
 public sealed record CreateSaleRequest
 (
     string SaleNumber,
-    Guid UserId,
+    Guid CustomerId,
     Guid BranchId,
     IReadOnlyCollection<CreateSaleItemRequest> Items
 );

@@ -9,6 +9,7 @@ public sealed class CreateSaleProfile : Profile
     {
         CreateMap<CreateSaleRequest, CreateSaleCommand>();
         CreateMap<CreateSaleItemRequest, CreateSaleItemCommand>();
-        CreateMap<CreateSaleResult, CreateSaleResponse>();
+        CreateMap<CreateSaleResult, CreateSaleResponse>()
+            .ForMember(dest => dest.SaleId, opt => opt.MapFrom(src => src.Id));
     }
 }

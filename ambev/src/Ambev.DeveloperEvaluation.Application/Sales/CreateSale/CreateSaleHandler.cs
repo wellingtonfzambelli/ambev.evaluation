@@ -27,32 +27,39 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         CancellationToken cancellationToken
     )
     {
-        var validationResult = new CreateSaleCommandValidator()
-            .Validate(command);
-
-        if (!validationResult.IsValid)
-            throw new ValidationException(validationResult.Errors);
-
-        var sale = new Sale
-        (
-            command.SaleNumber,
-            DateTime.UtcNow,
-            command.UserId,
-            command.BranchId
-        );
-
-        foreach (var item in command.Items)
+        try
         {
-            sale.AddItem
+            var validationResult = new CreateSaleCommandValidator()
+                .Validate(command);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            var sale = new Sale
             (
-                item.ProductId,
-                item.Quantity,
-                item.UnitPrice
+                command.SaleNumber,
+                DateTime.UtcNow,
+                command.CustomerId,
+                command.BranchId
             );
+
+            foreach (var item in command.Items)
+            {
+                sale.AddItem
+                (
+                    item.ProductId,
+                    item.Quantity,
+                    item.UnitPrice
+                );
+            }
+
+            await _saleRepository.CreateAsync(sale, cancellationToken);
+
+            return _mapper.Map<CreateSaleResult>(sale);
         }
-
-        await _saleRepository.CreateAsync(sale, cancellationToken);
-
-        return _mapper.Map<CreateSaleResult>(sale);
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -35,19 +35,14 @@ public sealed class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
         builder.Ignore(i => i.Total);
 
         // Product
-        builder.OwnsOne(i => i.Product, product =>
-        {
-            product.Property(p => p.Id)
-                .HasColumnName("ProductId")
-                .HasColumnType("uuid")
-                .IsRequired();
+        builder.Property(i => i.ProductId)
+            .HasColumnType("uuid")
+            .IsRequired();
 
-            product.Property(p => p.Name)
-                .HasColumnName("ProductName")
-                .HasColumnType("varchar(150)")
-                .HasMaxLength(150)
-                .IsRequired();
-        });
+        builder.HasOne(i => i.Product)
+            .WithMany()
+            .HasForeignKey(i => i.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // FK shadow property
         builder.Property<Guid>("SaleId")

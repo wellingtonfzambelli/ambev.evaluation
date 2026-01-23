@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -39,13 +39,13 @@ public sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.Ignore(s => s.TotalAmount);
 
         // ===== USER =====
-        builder.Property(s => s.UserId)
+        builder.Property(s => s.CustomerId)
             .HasColumnType("uuid")
             .IsRequired();
 
         builder.HasOne(s => s.User)
             .WithMany()
-            .HasForeignKey(s => s.UserId)
+            .HasForeignKey(s => s.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // ===== BRANCH =====
@@ -59,9 +59,12 @@ public sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .OnDelete(DeleteBehavior.Restrict);
 
         // ===== ITEMS (Aggregate boundary) =====
-        builder.HasMany(typeof(SaleItem), "_items")
+        builder.HasMany(s => s.Items)
             .WithOne()
             .HasForeignKey("SaleId")
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(s => s.Items)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

@@ -5,8 +5,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 
 public sealed class CreateSaleCommand : IRequest<CreateSaleResult>
 {
-    public string SaleNumber { get; init; } = default!;
-    public Guid UserId { get; init; }
+    public string SaleNumber { get; init; }
+    public Guid CustomerId { get; init; }
     public Guid BranchId { get; init; }
 
     public IReadOnlyCollection<CreateSaleItemCommand> Items { get; init; }

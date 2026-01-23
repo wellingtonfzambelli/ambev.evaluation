@@ -3,6 +3,7 @@ using System;
 using Ambev.DeveloperEvaluation.ORM;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ambev.DeveloperEvaluation.ORM.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20260122222730_FixSaleItemsBackingField")]
+    partial class FixSaleItemsBackingField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,9 +189,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("SaleDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -204,11 +204,14 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Sales", (string)null);
                 });
@@ -297,9 +300,9 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         new
                         {
                             Id = new Guid("9f3c6ce6-4a4a-4f2e-86a6-2c92f39e5e58"),
-                            CreatedAt = new DateTime(2026, 1, 23, 2, 15, 31, 27, DateTimeKind.Utc).AddTicks(7065),
+                            CreatedAt = new DateTime(2026, 1, 22, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "wellington@test.com",
-                            Password = "$2a$11$2L5/nxUCsZ9pE0qwCnp8V.NlRoXlhYhF4U6NCOD0sF1fjd2mV2O.a",
+                            Password = "123",
                             Phone = "(11) 99999-9999",
                             Role = "Admin",
                             Status = "Active",
@@ -317,7 +320,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
