@@ -13,11 +13,13 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ambev.DeveloperEvaluation.WebApi.Middleware;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
 [ApiController]
 [Authorize(Roles = "Customer")]
+[RequireCorrelationId]
 [Route("api/[controller]")]
 public sealed class SalesController : BaseController
 {
