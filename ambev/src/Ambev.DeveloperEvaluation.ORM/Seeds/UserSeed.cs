@@ -14,7 +14,7 @@ public static class UserSeed
             Email = "wellington@test.com",
             Password = "$2a$11$2L5/nxUCsZ9pE0qwCnp8V.NlRoXlhYhF4U6NCOD0sF1fjd2mV2O.a", // 12345678Wm@
             Phone = "(11) 99999-9999",
-            Role = UserRole.Admin,
+            Role = UserRole.Customer,
             Status = UserStatus.Active,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null

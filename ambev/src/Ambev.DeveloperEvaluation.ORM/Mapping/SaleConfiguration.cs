@@ -39,6 +39,11 @@ public sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.Ignore(s => s.TotalAmount);
 
         // ===== USER =====
+        builder.Property(s => s.CustomerName)
+            .HasColumnType("varchar(100)")
+            .HasMaxLength(100)
+            .IsRequired();
+
         builder.Property(s => s.CustomerId)
             .HasColumnType("uuid")
             .IsRequired();
@@ -49,6 +54,11 @@ public sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .OnDelete(DeleteBehavior.Restrict);
 
         // ===== BRANCH =====
+        builder.Property(s => s.BranchName)
+            .HasColumnType("varchar(100)")
+            .HasMaxLength(100)
+            .IsRequired();
+
         builder.Property(s => s.BranchId)
             .HasColumnType("uuid")
             .IsRequired();

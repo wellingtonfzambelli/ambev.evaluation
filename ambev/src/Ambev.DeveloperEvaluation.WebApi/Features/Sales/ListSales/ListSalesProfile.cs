@@ -12,5 +12,7 @@ public sealed class ListSalesProfile : Profile
     {
         CreateMap<ListSalesResult, ListSalesResponse>()
             .ForMember(dest => dest.SaleId, opt => opt.MapFrom(src => src.Id));
+
+        CreateMap<ListSalesItemResult, ListSalesItemResponse>();
     }
 }

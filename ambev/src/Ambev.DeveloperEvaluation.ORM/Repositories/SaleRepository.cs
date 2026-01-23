@@ -21,6 +21,17 @@ public sealed class SaleRepository : ISaleRepository
     public async Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _context.Sales.FindAsync(new object?[] { id }, cancellationToken);
 
+    public async Task<Sale?> GetByIdWithItemsAsync(Guid id, CancellationToken cancellationToken = default) =>
+        await _context.Sales
+            .Include(s => s.Items)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+
+    public async Task UpdateAsync(Sale sale, CancellationToken cancellationToken = default)
+    {
+        _context.Sales.Update(sale);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<Sale>> ListAsync(CancellationToken cancellationToken = default) =>
         await _context.Sales
             .AsNoTracking()

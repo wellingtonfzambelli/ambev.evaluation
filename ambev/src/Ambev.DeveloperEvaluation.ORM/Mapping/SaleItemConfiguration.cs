@@ -26,6 +26,11 @@ public sealed class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
             .HasPrecision(18, 2)
             .IsRequired();
 
+        builder.Property(i => i.ProductName)
+            .HasColumnType("varchar(150)")
+            .HasMaxLength(150)
+            .IsRequired();
+
         // Discount
         builder.Property(i => i.PercentageDiscount)
             .HasPrecision(5, 2)
