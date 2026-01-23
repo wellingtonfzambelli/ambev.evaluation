@@ -1,15 +1,20 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 
 public sealed class CancelSaleHandler : IRequestHandler<CancelSaleCommand>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IDistributedCache _cache;
 
-    public CancelSaleHandler(ISaleRepository saleRepository) =>
+    public CancelSaleHandler(ISaleRepository saleRepository, IDistributedCache cache)
+    {
         _saleRepository = saleRepository;
+        _cache = cache;
+    }
 
     public async Task Handle(CancelSaleCommand request, CancellationToken cancellationToken)
     {
@@ -27,5 +32,7 @@ public sealed class CancelSaleHandler : IRequestHandler<CancelSaleCommand>
             throw new InvalidOperationException("Sale is already canceled");
 
         await _saleRepository.UpdateAsync(sale, cancellationToken);
+        await _cache.RemoveAsync(SalesCacheKeys.All, cancellationToken);
+        await _cache.RemoveAsync(SalesCacheKeys.GetById(sale.Id), cancellationToken);
     }
 }

@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
@@ -13,12 +14,18 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
     private readonly ISaleRepository _saleRepository;
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
+    private readonly IDistributedCache _cache;
 
-    public UpdateSaleHandler(ISaleRepository saleRepository, IProductRepository productRepository, IMapper mapper)
+    public UpdateSaleHandler(
+        ISaleRepository saleRepository,
+        IProductRepository productRepository,
+        IMapper mapper,
+        IDistributedCache cache)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
         _mapper = mapper;
+        _cache = cache;
     }
 
     public async Task<UpdateSaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
@@ -46,6 +53,8 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
         sale.ReplaceItems(replacementItems);
 
         await _saleRepository.UpdateAsync(sale, cancellationToken);
+        await _cache.RemoveAsync(SalesCacheKeys.All, cancellationToken);
+        await _cache.RemoveAsync(SalesCacheKeys.GetById(sale.Id), cancellationToken);
 
         return _mapper.Map<UpdateSaleResult>(sale);
     }

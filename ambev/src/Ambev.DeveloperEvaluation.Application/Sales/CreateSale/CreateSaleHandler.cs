@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 
@@ -13,6 +14,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
     private readonly IBranchRepository _branchRepository;
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
+    private readonly IDistributedCache _cache;
 
     public CreateSaleHandler
     (
@@ -20,7 +22,8 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
        IUserRepository userRepository,
        IBranchRepository branchRepository,
        IProductRepository productRepository,
-       IMapper mapper
+       IMapper mapper,
+       IDistributedCache cache
     )
     {
         _saleRepository = saleRepository;
@@ -28,6 +31,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         _branchRepository = branchRepository;
         _productRepository = productRepository;
         _mapper = mapper;
+        _cache = cache;
     }
 
     public async Task<CreateSaleResult> Handle
@@ -75,6 +79,8 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         }
 
         await _saleRepository.CreateAsync(sale, cancellationToken);
+        await _cache.RemoveAsync(SalesCacheKeys.All, cancellationToken);
+        await _cache.RemoveAsync(SalesCacheKeys.GetById(sale.Id), cancellationToken);
 
         return _mapper.Map<CreateSaleResult>(sale);
     }
