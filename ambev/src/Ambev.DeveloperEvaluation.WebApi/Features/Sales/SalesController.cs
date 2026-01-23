@@ -67,7 +67,6 @@ public sealed class SalesController : BaseController
         CancellationToken cancellationToken
     )
     {
-        int.Parse("S");
         var request = new GetSaleRequest { Id = id };
         var validator = new GetSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
