@@ -12,6 +12,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - Serilog__WriteTo__0__Args__serverUrl=http://ambev.developerevaluation.seq:80
+      - Redis__Configuration=ambev.developerevaluation.cache:6379
     ports:
       - "8080"
       - "8081"
@@ -42,13 +43,14 @@ services:
 
   ambev.developerevaluation.cache:
     container_name: ambev_developer_evaluation_cache 
-    image: redis:7.4.1-alpine     
-    command: redis-server --requirepass ev@luAt10n
+    image: redis/redis-stack:latest
+    volumes:
+      - ./redis.acl:/usr/local/etc/redis/redis.acl:ro
     environment:
-       MONGO_INITDB_ROOT_USERNAME: developer
-       MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
+      - REDIS_ARGS=--requirepass ev@luAt10n --aclfile /usr/local/etc/redis/redis.acl
     ports:
-       - "6379"
+      - "6379:6379"
+      - "8001:8001"
 
   ambev.developerevaluation.seq:
     container_name: ambev_developer_evaluation_seq

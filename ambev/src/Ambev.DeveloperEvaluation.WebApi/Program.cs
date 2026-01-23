@@ -25,6 +25,10 @@ public class Program
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetSection("Redis").GetValue<string>("Configuration");
+            });
 
             builder.AddBasicHealthChecks();
             builder.Services.AddSwaggerGen();

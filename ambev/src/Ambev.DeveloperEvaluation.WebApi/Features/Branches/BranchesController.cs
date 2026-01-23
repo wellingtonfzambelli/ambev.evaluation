@@ -25,12 +25,13 @@ public sealed class BranchesController : BaseController
     public async Task<IActionResult> ListBranchesAsync(CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new ListBranchesQuery(), cancellationToken);
+        var data = _mapper.Map<IEnumerable<ListBranchesResponse>>(response);
 
         return Ok(new ApiResponseWithData<IEnumerable<ListBranchesResponse>>
         {
             Success = true,
             Message = "Branches retrieved successfully",
-            Data = _mapper.Map<IEnumerable<ListBranchesResponse>>(response)
+            Data = data
         });
     }
 }

@@ -25,12 +25,13 @@ public sealed class ProductsController : BaseController
     public async Task<IActionResult> ListProductsAsync(CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new ListProductsQuery(), cancellationToken);
+        var data = _mapper.Map<IEnumerable<ListProductsResponse>>(response);
 
         return Ok(new ApiResponseWithData<IEnumerable<ListProductsResponse>>
         {
             Success = true,
             Message = "Products retrieved successfully",
-            Data = _mapper.Map<IEnumerable<ListProductsResponse>>(response)
+            Data = data
         });
     }
 }
