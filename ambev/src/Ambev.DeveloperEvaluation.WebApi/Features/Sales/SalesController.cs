@@ -11,14 +11,13 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
-/// <summary>
-/// Controller for managing sales operations
-/// </summary>
 [ApiController]
+[Authorize(Roles = "Customer")]
 [Route("api/[controller]")]
 public sealed class SalesController : BaseController
 {
