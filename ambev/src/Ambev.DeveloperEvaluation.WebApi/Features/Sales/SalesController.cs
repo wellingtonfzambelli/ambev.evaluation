@@ -1,6 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -75,19 +77,19 @@ public sealed class SalesController : BaseController
     //    });
     //}
 
-    //[HttpGet]
-    //[ProducesResponseType(typeof(ApiResponseWithData<IEnumerable<GetAllSalesResponse>>), StatusCodes.Status200OK)]
-    //public async Task<IActionResult> GetAllSales(CancellationToken cancellationToken)
-    //{
-    //    var response = await _mediator.Send(new GetAllSalesQuery(), cancellationToken);
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<IEnumerable<ListSalesResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> ListSales(CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new ListSalesQuery(), cancellationToken);
 
-    //    return Ok(new ApiResponseWithData<IEnumerable<GetAllSalesResponse>>
-    //    {
-    //        Success = true,
-    //        Message = "Sales retrieved successfully",
-    //        Data = _mapper.Map<IEnumerable<GetAllSalesResponse>>(response)
-    //    });
-    //}
+        return Ok(new ApiResponseWithData<IEnumerable<ListSalesResponse>>
+        {
+            Success = true,
+            Message = "Sales retrieved successfully",
+            Data = _mapper.Map<IEnumerable<ListSalesResponse>>(response)
+        });
+    }
 
 
     //[HttpPut("{id}")]
