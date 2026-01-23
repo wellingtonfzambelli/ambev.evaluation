@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -42,7 +43,14 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
     {
         var idempotencyKey = SalesCacheKeys.Idempotency(command.SaleNumber);
         if (!string.IsNullOrWhiteSpace(await _cache.GetStringAsync(idempotencyKey, cancellationToken)))
-            throw new InvalidOperationException("Duplicate request is not allowed. Please wait 5 minutes.");
+        {
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(CreateSaleCommand.SaleNumber),
+                    "Duplicate request is not allowed. Please wait 5 minutes.")
+            });
+        }
 
         var validationResult = new CreateSaleCommandValidator().Validate(command);
 
