@@ -25,6 +25,8 @@ public sealed class RequireCorrelationIdAttribute : Attribute, IAsyncActionFilte
         context.HttpContext.Items[HeaderName] = correlationId.ToString();
         context.HttpContext.Response.Headers[HeaderName] = correlationId.ToString();
 
+        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<RequireCorrelationIdAttribute>>();
+        using (logger.BeginScope(new Dictionary<string, object> { ["CorrelationId"] = correlationId.ToString() }))
         using (LogContext.PushProperty("CorrelationId", correlationId.ToString()))
         {
             await next();

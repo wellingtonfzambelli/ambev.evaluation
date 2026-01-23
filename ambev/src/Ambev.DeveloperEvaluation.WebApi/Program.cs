@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application;
+using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -26,6 +27,7 @@ public class Program
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = builder.Configuration.GetSection("Redis").GetValue<string>("Configuration");
@@ -82,8 +84,10 @@ public class Program
             });
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            builder.Services.AddScoped<ICorrelationContext, CorrelationContext>();
 
             var app = builder.Build();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
             if (app.Environment.IsDevelopment())
