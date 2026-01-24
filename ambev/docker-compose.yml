@@ -12,7 +12,12 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - Serilog__WriteTo__0__Args__serverUrl=http://ambev.developerevaluation.seq:80
+      - Seq__Url=http://ambev.developerevaluation.seq/health
       - Redis__Configuration=ambev.developerevaluation.cache:6379
+      - RabbitMq__HostName=ambev.developerevaluation.rabbitmq
+      - RabbitMq__UserName=developer
+      - RabbitMq__Password=ev@luAt10n
+      - Mongo__ConnectionString=mongodb://developer:ev@luAt10n@ambev.developerevaluation.nosql:27017/?authSource=admin
     ports:
       - "8080"
       - "8081"
@@ -60,3 +65,13 @@ services:
       - SEQ_FIRSTRUN_ADMINPASSWORD=admin123
     ports:
       - "5341:80"
+
+  ambev.developerevaluation.rabbitmq:
+    container_name: ambev_developer_evaluation_rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=developer
+      - RABBITMQ_DEFAULT_PASS=ev@luAt10n
+    ports:
+      - "5672:5672"
+      - "15672:15672"

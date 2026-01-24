@@ -6,10 +6,13 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.WebApi.Messaging;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -85,6 +88,36 @@ public class Program
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             builder.Services.AddScoped<ICorrelationContext, CorrelationContext>();
+            builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<SaleCreatedConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    var settings = builder.Configuration.GetSection("RabbitMq").Get<RabbitMqSettings>()
+                        ?? new RabbitMqSettings();
+
+                    cfg.Host(settings.HostName, h =>
+                    {
+                        h.Username(settings.UserName);
+                        h.Password(settings.Password);
+                    });
+
+                    cfg.Message<SaleCreatedMessage>(m => m.SetEntityName("x.sale.created"));
+                    cfg.Publish<SaleCreatedMessage>(p => p.ExchangeType = ExchangeType.Direct);
+
+                    cfg.ReceiveEndpoint("q.sale.created", e =>
+                    {
+                        e.Bind("x.sale.created", s =>
+                        {
+                            s.RoutingKey = "rk.sale.created";
+                            s.ExchangeType = ExchangeType.Direct;
+                        });
+                        e.ConfigureConsumer<SaleCreatedConsumer>(context);
+                    });
+                });
+            });
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
