@@ -9,11 +9,16 @@ public sealed class CancelSaleHandler : IRequestHandler<CancelSaleCommand>
 {
     private readonly ISaleRepository _saleRepository;
     private readonly IDistributedCache _cache;
+    private readonly ISaleCancelledPublisher _publisher;
 
-    public CancelSaleHandler(ISaleRepository saleRepository, IDistributedCache cache)
+    public CancelSaleHandler(
+        ISaleRepository saleRepository,
+        IDistributedCache cache,
+        ISaleCancelledPublisher publisher)
     {
         _saleRepository = saleRepository;
         _cache = cache;
+        _publisher = publisher;
     }
 
     public async Task Handle(CancelSaleCommand request, CancellationToken cancellationToken)
@@ -34,5 +39,6 @@ public sealed class CancelSaleHandler : IRequestHandler<CancelSaleCommand>
         await _saleRepository.UpdateAsync(sale, cancellationToken);
         await _cache.RemoveAsync(SalesCacheKeys.All, cancellationToken);
         await _cache.RemoveAsync(SalesCacheKeys.GetById(sale.Id), cancellationToken);
+        await _publisher.PublishAsync(sale.Id, cancellationToken);
     }
 }

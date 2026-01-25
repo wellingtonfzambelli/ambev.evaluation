@@ -2,6 +2,8 @@ using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Application.Messaging;
 using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -93,9 +95,13 @@ public class Program
             // Messaging - RabbitMQ - MassTransit
             builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
             builder.Services.AddScoped<ISaleCreatedPublisher, SaleCreatedPublisher>();
+            builder.Services.AddScoped<ISaleUpdatedPublisher, SaleUpdatedPublisher>();
+            builder.Services.AddScoped<ISaleCancelledPublisher, SaleCancelledPublisher>();
             builder.Services.AddMassTransit(x =>
             {
                 x.AddConsumer<SaleCreatedConsumer>();
+                x.AddConsumer<SaleUpdatedConsumer>();
+                x.AddConsumer<SaleCancelledConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -110,6 +116,10 @@ public class Program
 
                     cfg.Message<SaleCreatedMessage>(m => m.SetEntityName("x.sale.created"));
                     cfg.Publish<SaleCreatedMessage>(p => p.ExchangeType = ExchangeType.Direct);
+                    cfg.Message<SaleUpdatedMessage>(m => m.SetEntityName("x.sale.updated"));
+                    cfg.Publish<SaleUpdatedMessage>(p => p.ExchangeType = ExchangeType.Direct);
+                    cfg.Message<SaleCancelledMessage>(m => m.SetEntityName("x.sale.cancelled"));
+                    cfg.Publish<SaleCancelledMessage>(p => p.ExchangeType = ExchangeType.Direct);
 
                     cfg.ReceiveEndpoint("q.sale.created", e =>
                     {
@@ -119,6 +129,26 @@ public class Program
                             s.ExchangeType = ExchangeType.Direct;
                         });
                         e.ConfigureConsumer<SaleCreatedConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint("q.sale.updated", e =>
+                    {
+                        e.Bind("x.sale.updated", s =>
+                        {
+                            s.RoutingKey = "rk.sale.updated";
+                            s.ExchangeType = ExchangeType.Direct;
+                        });
+                        e.ConfigureConsumer<SaleUpdatedConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint("q.sale.cancelled", e =>
+                    {
+                        e.Bind("x.sale.cancelled", s =>
+                        {
+                            s.RoutingKey = "rk.sale.cancelled";
+                            s.ExchangeType = ExchangeType.Direct;
+                        });
+                        e.ConfigureConsumer<SaleCancelledConsumer>(context);
                     });
                 });
             });

@@ -1,24 +1,23 @@
 using Ambev.DeveloperEvaluation.Application.Common;
-using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Messaging;
 
-public sealed class SaleCreatedPublisher : ISaleCreatedPublisher
+public sealed class SaleUpdatedPublisher : ISaleUpdatedPublisher
 {
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ICorrelationContext _correlationContext;
-    private readonly ILogger<SaleCreatedPublisher> _logger;
+    private readonly ILogger<SaleUpdatedPublisher> _logger;
 
-    public SaleCreatedPublisher
+    public SaleUpdatedPublisher
     (
         IPublishEndpoint publishEndpoint,
         ICorrelationContext correlationContext,
-        ILogger<SaleCreatedPublisher> logger
+        ILogger<SaleUpdatedPublisher> logger
     )
     {
-
         _publishEndpoint = publishEndpoint;
         _correlationContext = correlationContext;
         _logger = logger;
@@ -27,13 +26,13 @@ public sealed class SaleCreatedPublisher : ISaleCreatedPublisher
     public async Task PublishAsync(Guid saleId, CancellationToken cancellationToken)
     {
         var publishTask = _publishEndpoint.Publish(
-            new SaleCreatedMessage
+            new SaleUpdatedMessage
             {
                 SaleId = saleId
             },
             context =>
             {
-                context.SetRoutingKey("rk.sale.created");
+                context.SetRoutingKey("rk.sale.updated");
                 if (!string.IsNullOrWhiteSpace(_correlationContext.CorrelationId))
                 {
                     context.Headers.Set("correlationId", _correlationContext.CorrelationId);
@@ -46,7 +45,7 @@ public sealed class SaleCreatedPublisher : ISaleCreatedPublisher
         await publishTask.WaitAsync(timeoutCts.Token);
 
         _logger.LogInformation(
-            "SaleCreated published. CorrelationId: {CorrelationId}",
+            "SaleUpdated published. CorrelationId: {CorrelationId}",
             _correlationContext.CorrelationId);
     }
 }

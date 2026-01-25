@@ -1,24 +1,23 @@
 using Ambev.DeveloperEvaluation.Application.Common;
-using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Messaging;
 
-public sealed class SaleCreatedPublisher : ISaleCreatedPublisher
+public sealed class SaleCancelledPublisher : ISaleCancelledPublisher
 {
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ICorrelationContext _correlationContext;
-    private readonly ILogger<SaleCreatedPublisher> _logger;
+    private readonly ILogger<SaleCancelledPublisher> _logger;
 
-    public SaleCreatedPublisher
+    public SaleCancelledPublisher
     (
         IPublishEndpoint publishEndpoint,
         ICorrelationContext correlationContext,
-        ILogger<SaleCreatedPublisher> logger
+        ILogger<SaleCancelledPublisher> logger
     )
     {
-
         _publishEndpoint = publishEndpoint;
         _correlationContext = correlationContext;
         _logger = logger;
@@ -27,13 +26,13 @@ public sealed class SaleCreatedPublisher : ISaleCreatedPublisher
     public async Task PublishAsync(Guid saleId, CancellationToken cancellationToken)
     {
         var publishTask = _publishEndpoint.Publish(
-            new SaleCreatedMessage
+            new SaleCancelledMessage
             {
                 SaleId = saleId
             },
             context =>
             {
-                context.SetRoutingKey("rk.sale.created");
+                context.SetRoutingKey("rk.sale.cancelled");
                 if (!string.IsNullOrWhiteSpace(_correlationContext.CorrelationId))
                 {
                     context.Headers.Set("correlationId", _correlationContext.CorrelationId);
@@ -46,7 +45,7 @@ public sealed class SaleCreatedPublisher : ISaleCreatedPublisher
         await publishTask.WaitAsync(timeoutCts.Token);
 
         _logger.LogInformation(
-            "SaleCreated published. CorrelationId: {CorrelationId}",
-            _correlationContext.CorrelationId);
+            "SaleCancelled published. SaleId: {SaleId}",
+            saleId);
     }
 }

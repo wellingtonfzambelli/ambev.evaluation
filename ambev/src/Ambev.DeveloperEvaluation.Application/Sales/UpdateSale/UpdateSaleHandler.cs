@@ -15,17 +15,20 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
     private readonly IDistributedCache _cache;
+    private readonly ISaleUpdatedPublisher _publisher;
 
     public UpdateSaleHandler(
         ISaleRepository saleRepository,
         IProductRepository productRepository,
         IMapper mapper,
-        IDistributedCache cache)
+        IDistributedCache cache,
+        ISaleUpdatedPublisher publisher)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
         _mapper = mapper;
         _cache = cache;
+        _publisher = publisher;
     }
 
     public async Task<UpdateSaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
@@ -55,6 +58,7 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
         await _saleRepository.UpdateAsync(sale, cancellationToken);
         await _cache.RemoveAsync(SalesCacheKeys.All, cancellationToken);
         await _cache.RemoveAsync(SalesCacheKeys.GetById(sale.Id), cancellationToken);
+        await _publisher.PublishAsync(sale.Id, cancellationToken);
 
         return _mapper.Map<UpdateSaleResult>(sale);
     }
