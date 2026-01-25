@@ -40,9 +40,9 @@ public sealed class ListSalesHandler : IRequestHandler<ListSalesQuery, IReadOnly
         CancellationToken cancellationToken
     )
     {
-        _logger.LogInformation("Listing sales 2");
+        _logger.LogInformation("Listing sales");
 
-        int.Parse("int");
+
         var cachedData = await _cache.GetStringAsync(SalesCacheKeys.All, cancellationToken);
         if (!string.IsNullOrWhiteSpace(cachedData))
         {

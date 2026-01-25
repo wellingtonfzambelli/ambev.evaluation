@@ -161,9 +161,14 @@ services:
     container_name: ambev_developer_evaluation_rabbitmq_exporter
     image: kbudde/rabbitmq-exporter:latest
     environment:
-      - RABBIT_URL=http://developer:ev@luAt10n@ambev.developerevaluation.rabbitmq:15672
+      - RABBIT_URL=http://ambev.developerevaluation.rabbitmq:15672
+      - RABBIT_USER=developer
+      - RABBIT_PASSWORD=ev@luAt10n
     ports:
       - "9419:9419"
+    depends_on:
+      ambev.developerevaluation.rabbitmq:
+        condition: service_healthy
 
 
 

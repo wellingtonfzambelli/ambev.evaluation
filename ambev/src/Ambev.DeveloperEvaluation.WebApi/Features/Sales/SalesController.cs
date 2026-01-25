@@ -137,7 +137,7 @@ public sealed class SalesController : BaseController
         });
     }
 
-    [HttpPost("{id}/cancel")]
+    [HttpPatch("{id}/cancel")]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelSaleAsync
