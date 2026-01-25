@@ -12,10 +12,12 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
+using Ambev.DeveloperEvaluation.WebApi.Metrics;
 using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 using RabbitMQ.Client;
 using Serilog;
 
@@ -105,6 +107,7 @@ public class Program
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             builder.Services.AddScoped<ICorrelationContext, CorrelationContext>();
+            builder.Services.AddHostedService<HealthCheckMetricsService>();
 
             // Messaging - RabbitMQ - MassTransit
             builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
@@ -179,12 +182,14 @@ public class Program
 
             app.UseHttpsRedirection();
             app.UseRateLimiter();
+            app.UseHttpMetrics();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseBasicHealthChecks();
 
+            app.MapMetrics();
             app.MapControllers();
 
             app.Run();

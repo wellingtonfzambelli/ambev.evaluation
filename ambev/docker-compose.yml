@@ -24,7 +24,20 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      ambev.developerevaluation.database:
+        condition: service_healthy
+      ambev.developerevaluation.cache:
+        condition: service_healthy
+      ambev.developerevaluation.rabbitmq:
+        condition: service_healthy
+      ambev.developerevaluation.nosql:
+        condition: service_healthy
+      ambev.developerevaluation.seq:
+        condition: service_healthy
 
+
+  # DATABASE POSTGRES
   ambev.developerevaluation.database:
     container_name: ambev_developer_evaluation_database
     image: postgres:13
@@ -33,10 +46,32 @@ services:
       POSTGRES_DB: developer_evaluation
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: ev@luAt10n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U developer -d developer_evaluation"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+
+  # GRAFANA
+  ambev.developerevaluation.grafana:
+    container_name: ambev_developer_evaluation_grafana
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+
+
+  # NOSQL MONGODB
   ambev.developerevaluation.nosql:
     container_name: ambev_developer_evaluation_nosql 
     image: mongo:8.0    
@@ -45,7 +80,14 @@ services:
         MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
     ports:
       - "27017"
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.runCommand({ ping: 1 })\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+
+  # CACHE REDIS
   ambev.developerevaluation.cache:
     container_name: ambev_developer_evaluation_cache 
     image: redis/redis-stack:latest
@@ -56,7 +98,13 @@ services:
     ports:
       - "6379:6379"
       - "8001:8001"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ev@luAt10n ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # SEQ - LOG SERVER
   ambev.developerevaluation.seq:
     container_name: ambev_developer_evaluation_seq
     image: datalust/seq:latest
@@ -65,7 +113,14 @@ services:
       - SEQ_FIRSTRUN_ADMINPASSWORD=admin123
     ports:
       - "5341:80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/health > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+
+  # RABBITMQ
   ambev.developerevaluation.rabbitmq:
     container_name: ambev_developer_evaluation_rabbitmq
     image: rabbitmq:3-management
@@ -75,3 +130,44 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  # PROMETHEUS
+  ambev.developerevaluation.prometheus:
+    container_name: ambev_developer_evaluation_prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+
+  # PROMETHEUS - EXPORTER (DATABASE)
+  ambev.developerevaluation.postgres_exporter:
+    container_name: ambev_developer_evaluation_postgres_exporter
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      - DATA_SOURCE_NAME=postgresql://developer:ev@luAt10n@ambev.developerevaluation.database:5432/developer_evaluation?sslmode=disable
+    ports:
+      - "9187:9187"
+
+  # PROMETHEUS - EXPORTER (RABBITMQ)
+  ambev.developerevaluation.rabbitmq_exporter:
+    container_name: ambev_developer_evaluation_rabbitmq_exporter
+    image: kbudde/rabbitmq-exporter:latest
+    environment:
+      - RABBIT_URL=http://developer:ev@luAt10n@ambev.developerevaluation.rabbitmq:15672
+    ports:
+      - "9419:9419"
+
+
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
