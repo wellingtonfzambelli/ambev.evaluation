@@ -41,39 +41,20 @@ public sealed class SalesController : BaseController
         CancellationToken cancellationToken
     )
     {
-        try
-        {
-            var validator = new CreateSaleRequestValidator();
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        var validator = new CreateSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-            if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
 
-            var command = _mapper.Map<CreateSaleCommand>(request);
-            await _mediator.Send(command, cancellationToken);
+        var command = _mapper.Map<CreateSaleCommand>(request);
+        await _mediator.Send(command, cancellationToken);
 
-            return Accepted(new ApiResponse
-            {
-                Success = true,
-                Message = "Sale creation queued successfully"
-            });
-        }
-        catch (OperationCanceledException)
+        return Accepted(new ApiResponse
         {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new ApiResponse
-            {
-                Success = false,
-                Message = "Message publish timed out. Please try again."
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new ApiResponse
-            {
-                Success = false,
-                Message = $"An error occurred while queuing the sale creation: {ex.Message}"
-            });
-        }
+            Success = true,
+            Message = "Sale creation queued successfully"
+        });
     }
 
     [HttpGet("{id}")]
