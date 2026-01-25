@@ -9,11 +9,11 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
+using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Ambev.DeveloperEvaluation.WebApi.Middleware;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
@@ -41,21 +41,39 @@ public sealed class SalesController : BaseController
         CancellationToken cancellationToken
     )
     {
-        var validator = new CreateSaleRequestValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
-        var command = _mapper.Map<CreateSaleCommand>(request);
-        var response = await _mediator.Send(command, cancellationToken);
-
-        return Created(string.Empty, new ApiResponseWithData<CreateSaleResponse>
+        try
         {
-            Success = true,
-            Message = "Sale created successfully",
-            Data = _mapper.Map<CreateSaleResponse>(response)
-        });
+            var validator = new CreateSaleRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<CreateSaleCommand>(request);
+            await _mediator.Send(command, cancellationToken);
+
+            return Accepted(new ApiResponse
+            {
+                Success = true,
+                Message = "Sale creation queued successfully"
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new ApiResponse
+            {
+                Success = false,
+                Message = "Message publish timed out. Please try again."
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = $"An error occurred while queuing the sale creation: {ex.Message}"
+            });
+        }
     }
 
     [HttpGet("{id}")]

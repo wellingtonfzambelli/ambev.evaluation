@@ -1,12 +1,13 @@
 using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Application.Common;
+using Ambev.DeveloperEvaluation.Application.Messaging;
+using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
-using Ambev.DeveloperEvaluation.WebApi.Messaging;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MassTransit;
 using MediatR;
@@ -88,7 +89,10 @@ public class Program
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             builder.Services.AddScoped<ICorrelationContext, CorrelationContext>();
+
+            // Messaging - RabbitMQ - MassTransit
             builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
+            builder.Services.AddScoped<ISaleCreatedPublisher, SaleCreatedPublisher>();
             builder.Services.AddMassTransit(x =>
             {
                 x.AddConsumer<SaleCreatedConsumer>();
