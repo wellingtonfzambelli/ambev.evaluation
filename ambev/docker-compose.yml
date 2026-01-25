@@ -19,8 +19,8 @@ services:
       - RabbitMq__Password=ev@luAt10n
       - Mongo__ConnectionString=mongodb://developer:ev@luAt10n@ambev.developerevaluation.nosql:27017/?authSource=admin
     ports:
-      - "8080"
-      - "8081"
+      - "9826:8080"
+      - "9827:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

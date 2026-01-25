@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Metrics;
 
 public sealed class HealthCheckMetricsService : BackgroundService
 {
-    private static readonly Gauge HealthCheckStatus = Metrics.CreateGauge(
+    private static readonly Gauge HealthCheckStatus = global::Prometheus.Metrics.CreateGauge(
         "ambev_healthcheck_status",
         "Health check status (1 healthy, 0 unhealthy).",
         new GaugeConfiguration { LabelNames = ["name"] });
@@ -19,15 +19,29 @@ public sealed class HealthCheckMetricsService : BackgroundService
     {
         _healthCheckService = healthCheckService;
         _logger = logger;
+        _logger.LogInformation("Health check metrics worker constructed.");
+    }
+
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Health check metrics worker starting.");
+        return base.StartAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Health check metrics worker started.");
+
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
                 HealthReport report = await _healthCheckService.CheckHealthAsync(stoppingToken);
+
+                if (report.Entries.Count == 0)
+                {
+                    _logger.LogWarning("No health checks registered for metrics export.");
+                }
 
                 foreach (var entry in report.Entries)
                 {
