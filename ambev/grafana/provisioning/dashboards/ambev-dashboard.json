@@ -490,7 +490,7 @@
       },
       "targets": [
         {
-          "expr": "rabbitmq_queue_messages{queue=\"q.sale.created\"}",
+          "expr": "sum by (queue) (rabbitmq_queue_messages{queue=\"q.sale.created\"})",
           "refId": "A"
         }
       ],
@@ -541,7 +541,7 @@
       },
       "targets": [
         {
-          "expr": "rabbitmq_queue_messages{queue=\"q.sale.updated\"}",
+          "expr": "sum by (queue) (rabbitmq_queue_messages{queue=\"q.sale.updated\"})",
           "refId": "A"
         }
       ],
@@ -592,7 +592,7 @@
       },
       "targets": [
         {
-          "expr": "rabbitmq_queue_messages{queue=\"q.sale.cancelled\"}",
+          "expr": "sum by (queue) (rabbitmq_queue_messages{queue=\"q.sale.cancelled\"})",
           "refId": "A"
         }
       ],
@@ -656,7 +656,7 @@
       },
       "targets": [
         {
-          "expr": "rabbitmq_queue_messages_delivered_total{queue=\"q.sale.created\"}",
+          "expr": "sum by (queue) (rabbitmq_queue_messages_delivered_total{queue=\"q.sale.created\"})",
           "refId": "A"
         }
       ],
@@ -707,7 +707,7 @@
       },
       "targets": [
         {
-          "expr": "rabbitmq_queue_messages_delivered_total{queue=\"q.sale.updated\"}",
+          "expr": "sum by (queue) (rabbitmq_queue_messages_delivered_total{queue=\"q.sale.updated\"})",
           "refId": "A"
         }
       ],
@@ -758,7 +758,7 @@
       },
       "targets": [
         {
-          "expr": "rabbitmq_queue_messages_delivered_total{queue=\"q.sale.cancelled\"}",
+          "expr": "sum by (queue) (rabbitmq_queue_messages_delivered_total{queue=\"q.sale.cancelled\"})",
           "refId": "A"
         }
       ],
@@ -1052,6 +1052,111 @@
       ],
       "title": "Users",
       "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 300,
+      "panels": [],
+      "title": "API Resources",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#D7BDE2",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 22
+      },
+      "id": 301,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "ambev_process_cpu_percent{job=\"webapi\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "API CPU (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#D7BDE2",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 22
+      },
+      "id": 302,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "ambev_process_working_set_bytes{job=\"webapi\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "API Memory (bytes)",
+      "type": "timeseries"
     }
   ],
   "refresh": "5s",

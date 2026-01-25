@@ -108,6 +108,7 @@ public class Program
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             builder.Services.AddScoped<ICorrelationContext, CorrelationContext>();
             builder.Services.AddHostedService<HealthCheckMetricsService>();
+            builder.Services.AddHostedService<ProcessMetricsService>();
 
             // Messaging - RabbitMQ - MassTransit
             builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
