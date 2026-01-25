@@ -68,28 +68,6 @@ public sealed class Sale : BaseEntity
         UpdateAt = DateTime.UtcNow;
     }
 
-    public bool RemoveItem(Guid productId)
-    {
-        var item = _items.FirstOrDefault(i => i.ProductId == productId);
-        if (item is null)
-        {
-            return false;
-        }
-
-        _items.Remove(item);
-        UpdateAt = DateTime.UtcNow;
-        return true;
-    }
-
-    public void SetStatus(SaleStatus status)
-    {
-        if (SaleStatus == status)
-            return;
-
-        SaleStatus = status;
-        UpdateAt = DateTime.UtcNow;
-    }
-
     public bool CancelStatus()
     {
         if (SaleStatus == SaleStatus.Canceled)
