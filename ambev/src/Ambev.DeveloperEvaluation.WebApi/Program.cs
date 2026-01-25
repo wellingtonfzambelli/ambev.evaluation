@@ -1,9 +1,10 @@
+using System.Threading.RateLimiting;
 using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Application.Messaging;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
-using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -37,6 +38,19 @@ public class Program
             builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = builder.Configuration.GetSection("Redis").GetValue<string>("Configuration");
+            });
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        "global",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 2,
+                            Window = TimeSpan.FromSeconds(10),
+                            QueueLimit = 0,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                        }));
             });
 
             builder.AddBasicHealthChecks();
@@ -164,6 +178,7 @@ public class Program
             }
 
             app.UseHttpsRedirection();
+            app.UseRateLimiter();
 
             app.UseAuthentication();
             app.UseAuthorization();
