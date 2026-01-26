@@ -32,7 +32,7 @@ jobs:
         run: dotnet test ambev/Ambev.DeveloperEvaluation.sln -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ambev/TestResults
 
       - name: Coverage report
-        run: reportgenerator -reports:"ambev/TestResults/**/coverage.cobertura.xml" -targetdir:"ambev/TestResults/CoverageReport" -reporttypes:Html;TextSummary
+        run: reportgenerator -reports:"ambev/TestResults/**/coverage.cobertura.xml" -targetdir:"ambev/TestResults/CoverageReport" -reporttypes:"Html;TextSummary"
 
       - name: Coverage summary
         run: cat ambev/TestResults/CoverageReport/Summary.txt
