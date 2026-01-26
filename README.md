@@ -96,3 +96,7 @@ I also implemented the RateLimit Pattern, to avoid a sequence of unecessary requ
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/cb46cb1b-dbdc-4dc3-a7ba-ae1acc1faaf6" />
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/e6e1e440-8c03-4cd7-9cb8-3e7810b78aa0" />
 <br /><br /><br />
+
+
+I created a Grafana Dashboard to monitoring: RabbitMQ Queues, Database Tables, HealtchChecks integrations, Api Resources _(CPU & Memory)_
+<img width="1859" height="998" alt="image" src="https://github.com/user-attachments/assets/9187bd17-046f-48be-962f-0785b5fca8af" />
