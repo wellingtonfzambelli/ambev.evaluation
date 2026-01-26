@@ -77,6 +77,7 @@ I used Redis for caching the product/branches lists. I used caching for getting 
 
 I also used Redis for Idempotency. If the user tries to create sales with the same correlationId, it's not possible  
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/2bee2a78-bd09-4c1c-9c16-9e83e64b20d0" />
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/318a6bd4-c658-49f4-876f-ff6d5e0bf725" />
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/318a6bd4-c658-49f4-876f-ff6d5e0bf725" />  
+<img width="1908" height="500" alt="image" src="https://github.com/user-attachments/assets/1cfa732e-cc64-4f89-89e8-8fba1e3333c4" />
 <br /><br />
 
