@@ -58,6 +58,7 @@ public class Program
             builder.AddBasicHealthChecks();
             builder.Services.AddSwaggerGen(options =>
             {
+                options.OperationFilter<Swagger.CorrelationIdHeaderOperationFilter>();
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
