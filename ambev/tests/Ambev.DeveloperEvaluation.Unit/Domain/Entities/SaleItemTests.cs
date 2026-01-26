@@ -28,12 +28,14 @@ public sealed class SaleItemTests
     [Theory(DisplayName = "SaleItem should update discount when quantity increases")]
     [InlineData(3, 1, 4, 0.10, 36.0)]
     [InlineData(9, 1, 10, 0.20, 80.0)]
-    public void Given_QuantityIncrease_When_Increased_Then_ShouldRecalculateDiscount(
+    public void Given_QuantityIncrease_When_Increased_Then_ShouldRecalculateDiscount
+    (
         int initialQuantity,
         int increaseBy,
         int expectedQuantity,
         decimal expectedDiscount,
-        decimal expectedTotal)
+        decimal expectedTotal
+    )
     {
         // Arrange
         const decimal unitPrice = 10m;

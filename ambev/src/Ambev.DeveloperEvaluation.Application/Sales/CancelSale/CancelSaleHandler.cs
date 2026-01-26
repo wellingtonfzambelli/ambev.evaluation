@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -31,7 +32,12 @@ public sealed class CancelSaleHandler : IRequestHandler<CancelSaleCommand>
 
         var sale = await _saleRepository.GetByIdAsync(request.Id, cancellationToken);
         if (sale is null)
-            throw new KeyNotFoundException($"Sale with ID {request.Id} not found");
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(CancelSaleCommand.Id),
+                    $"Sale with ID {request.Id} not found")
+            });
 
         if (!sale.CancelStatus())
             throw new InvalidOperationException("Sale is already canceled");

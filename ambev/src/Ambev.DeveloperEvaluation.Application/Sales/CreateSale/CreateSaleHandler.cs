@@ -63,11 +63,21 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
 
         if (await _userRepository.GetByIdAsync(command.CustomerId, cancellationToken)
             is var customer && customer is null)
-            throw new KeyNotFoundException($"Customer with ID {command.CustomerId} not found");
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(CreateSaleCommand.CustomerId),
+                    $"Customer with ID {command.CustomerId} not found")
+            });
 
         if (await _branchRepository.GetByIdAsync(command.BranchId, cancellationToken)
             is var branch && branch is null)
-            throw new KeyNotFoundException($"Branch with ID {command.BranchId} not found");
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(CreateSaleCommand.BranchId),
+                    $"Branch with ID {command.BranchId} not found")
+            });
 
         var sale = new Sale
         (
@@ -83,7 +93,12 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         {
             if (await _productRepository.GetByIdAsync(item.ProductId, cancellationToken)
                 is var product && product is null)
-                throw new KeyNotFoundException($"Product with ID {item.ProductId} not found");
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure(
+                        nameof(CreateSaleItemCommand.ProductId),
+                        $"Product with ID {item.ProductId} not found")
+                });
 
             sale.AddItem
             (

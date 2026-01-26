@@ -1,14 +1,14 @@
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
-/// <summary>
-/// Handler for replacing sale items.
-/// </summary>
 public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleResult>
 {
     private readonly ISaleRepository _saleRepository;
@@ -17,12 +17,14 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
     private readonly IDistributedCache _cache;
     private readonly ISaleUpdatedPublisher _publisher;
 
-    public UpdateSaleHandler(
+    public UpdateSaleHandler
+    (
         ISaleRepository saleRepository,
         IProductRepository productRepository,
         IMapper mapper,
         IDistributedCache cache,
-        ISaleUpdatedPublisher publisher)
+        ISaleUpdatedPublisher publisher
+    )
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -39,16 +41,36 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        var sale = await _saleRepository.GetByIdWithItemsAsync(request.Id, cancellationToken);
-        if (sale is null)
-            throw new KeyNotFoundException($"Sale with ID {request.Id} not found");
+        if (await _saleRepository.GetByIdWithItemsAsync(request.Id, cancellationToken)
+            is var sale && sale is null)
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(UpdateSaleCommand.Id),
+                    $"Sale with ID {request.Id} not found")
+            });
+
+        if (sale.SaleStatus == SaleStatus.Canceled)
+        {
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(Sale.SaleStatus),
+                    "Cannot update items for a canceled sale.")
+            });
+        }
 
         var replacementItems = new List<(Guid ProductId, string ProductName, int Quantity, decimal UnitPrice)>();
         foreach (var item in request.Items)
         {
-            var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
-            if (product is null)
-                throw new KeyNotFoundException($"Product with ID {item.ProductId} not found");
+            if (await _productRepository.GetByIdAsync(item.ProductId, cancellationToken)
+                is var product && product is null)
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure(
+                        nameof(UpdateSaleItemCommand.ProductId),
+                        $"Product with ID {item.ProductId} not found")
+                });
 
             replacementItems.Add((item.ProductId, product.Name, item.Quantity, item.UnitPrice));
         }

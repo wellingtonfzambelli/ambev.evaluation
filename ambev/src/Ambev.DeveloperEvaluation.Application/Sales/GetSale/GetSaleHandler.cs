@@ -1,15 +1,13 @@
+using System.Text.Json;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 
-/// <summary>
-/// Handler for retrieving a sale by ID.
-/// </summary>
 public sealed class GetSaleHandler : IRequestHandler<GetSaleQuery, GetSaleResult>
 {
     private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(10);
@@ -40,9 +38,14 @@ public sealed class GetSaleHandler : IRequestHandler<GetSaleQuery, GetSaleResult
             return JsonSerializer.Deserialize<GetSaleResult>(cachedData) ?? new GetSaleResult();
         }
 
-        var sale = await _saleRepository.GetByIdWithItemsAsync(request.Id, cancellationToken);
-        if (sale is null)
-            throw new KeyNotFoundException($"Sale with ID {request.Id} not found");
+        if (await _saleRepository.GetByIdWithItemsAsync(request.Id, cancellationToken)
+            is var sale && sale is null)
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(
+                    nameof(GetSaleQuery.Id),
+                    $"Sale with ID {request.Id} not found")
+            });
 
         var result = _mapper.Map<GetSaleResult>(sale);
 

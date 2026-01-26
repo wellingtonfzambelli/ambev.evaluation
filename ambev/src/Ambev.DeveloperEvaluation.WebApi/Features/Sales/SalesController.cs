@@ -125,9 +125,18 @@ public sealed class SalesController : BaseController
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var command = _mapper.Map<UpdateSaleCommand>(request);
-        command.Id = saleId;
-        var response = await _mediator.Send(command, cancellationToken);
+        UpdateSaleResult response;
+
+        try
+        {
+            var command = _mapper.Map<UpdateSaleCommand>(request);
+            command.Id = saleId;
+            response = await _mediator.Send(command, cancellationToken);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
 
         return Ok(new ApiResponseWithData<UpdateSaleResponse>
         {
