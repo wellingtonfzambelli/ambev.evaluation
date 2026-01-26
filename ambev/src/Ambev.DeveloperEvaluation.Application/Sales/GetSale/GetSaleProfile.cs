@@ -3,14 +3,12 @@ using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 
-/// <summary>
-/// AutoMapper profile for sale details.
-/// </summary>
 public sealed class GetSaleProfile : Profile
 {
     public GetSaleProfile()
     {
         CreateMap<Sale, GetSaleResult>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.SaleStatus.ToString()))
             .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount));
 
