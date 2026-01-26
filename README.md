@@ -34,8 +34,8 @@ I setup the docker-compose file
 <br /><br />
 
 
-I confirmed if the docke Containers are UP
-<img width="1699" height="967" alt="image" src="https://github.com/user-attachments/assets/b46a48b9-3720-4db8-9fff-92fa89405172" />
+I confirmed if the Docker containers are UP
+<img width="1638" height="768" alt="image" src="https://github.com/user-attachments/assets/a47c6dce-32bf-4383-b31f-591106ee7c95" />
 <br /><br />
 
 
