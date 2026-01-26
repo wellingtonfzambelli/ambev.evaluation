@@ -26,8 +26,10 @@ I implemented the Sales feature, covering create, list, update, and cancel opera
 I Used Github Kanban Dashboard to organize my tasks  
 https://github.com/users/wellingtonfzambelli/projects/4/views/1  
 <img width="1477" height="954" alt="image" src="https://github.com/user-attachments/assets/26a7700f-81c2-4645-9bf8-a62363a3fc33" />
+<br /><br />
 
-I setup the docker-compose file 
+
+I setup the docker-compose file   
 <img width="200"  alt="image" src="https://github.com/user-attachments/assets/fd1b6b14-f938-486f-89b2-1fa6ddaf3962" />  
 <br /><br />
 
