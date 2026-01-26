@@ -20,10 +20,10 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore Ambev.DeveloperEvaluation.sln
+        run: dotnet restore ambev/Ambev.DeveloperEvaluation.sln
 
       - name: Build
-        run: dotnet build Ambev.DeveloperEvaluation.sln -c Release --no-restore
+        run: dotnet build ambev/Ambev.DeveloperEvaluation.sln -c Release --no-restore
 
       - name: Test
-        run: dotnet test Ambev.DeveloperEvaluation.sln -c Release --no-build --verbosity normal
+        run: dotnet test ambev/Ambev.DeveloperEvaluation.sln -c Release --no-build --verbosity normal
