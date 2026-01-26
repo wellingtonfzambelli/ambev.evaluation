@@ -1,0 +1,305 @@
+{
+  "info": {
+    "_postman_id": "fc034ea2-212a-4b7f-93d2-a6059ac75d7d",
+    "name": "Ambev (Docker)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31620614"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"wellington@test.com\",\r\n  \"password\": \"12345678Wm@\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9826/api/Auth",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Auth"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Branch",
+      "item": [
+        {
+          "name": "GetAll Branches",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9826/api/Branches",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Branches"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "GetAll Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9826/api/Products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "GetAll Sales",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5ZjNjNmNlNi00YTRhLTRmMmUtODZhNi0yYzkyZjM5ZTVlNTgiLCJ1bmlxdWVfbmFtZSI6IldlbGxpbmd0b24iLCJyb2xlIjoiQ3VzdG9tZXIiLCJuYmYiOjE3Njk0NDE4ODgsImV4cCI6MTc2OTQ3MDY4OCwiaWF0IjoxNzY5NDQxODg4fQ.ZMePqawPCLKjEUtETaMoW5TVjXCOm1Kd9BIzRK8qduM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "correlationid",
+                "value": "e01cbaac-ff31-459d-a627-0b2d7a16df79",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:9826/api/Sales",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Sales"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sale by Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5ZjNjNmNlNi00YTRhLTRmMmUtODZhNi0yYzkyZjM5ZTVlNTgiLCJ1bmlxdWVfbmFtZSI6IldlbGxpbmd0b24iLCJyb2xlIjoiQ3VzdG9tZXIiLCJuYmYiOjE3NjkzNjg3MzUsImV4cCI6MTc2OTM5NzUzNSwiaWF0IjoxNzY5MzY4NzM1fQ.xoZrzUs5fMelJVzu-h0_58yFeD5m6d-VLHlev355XGk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "correlationId",
+                "value": "244de37d-8057-4b53-8d3d-f5b81e818588",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:9826/api/Sales/dada6f4f-848a-45f9-8f3c-a61ea7a816b4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Sales",
+                "dada6f4f-848a-45f9-8f3c-a61ea7a816b4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Sale",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5ZjNjNmNlNi00YTRhLTRmMmUtODZhNi0yYzkyZjM5ZTVlNTgiLCJ1bmlxdWVfbmFtZSI6IldlbGxpbmd0b24iLCJyb2xlIjoiQ3VzdG9tZXIiLCJuYmYiOjE3NjkzNjg3MzUsImV4cCI6MTc2OTM5NzUzNSwiaWF0IjoxNzY5MzY4NzM1fQ.xoZrzUs5fMelJVzu-h0_58yFeD5m6d-VLHlev355XGk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "correlationId",
+                "value": "cc73e894-5fde-4ddf-a5c1-de10bda922be",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"saleNumber\": \"SALE-12345\",\r\n  \"customerId\": \"9f3c6ce6-4a4a-4f2e-86a6-2c92f39e5e58\",\r\n  \"branchId\": \"7f8a9b0c-1d2e-3f4a-5b6c-7d8e9f0a1b2c\",\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"0f1b00d2-0ff3-4b2b-8b8c-1c6f1e9a1b16\",\r\n      \"quantity\": 2,\r\n      \"unitPrice\": 2499.99\r\n    },\r\n    {\r\n      \"productId\": \"3c6e8c9b-7b61-4d6b-95f0-2c1f4dbbe6d2\",\r\n      \"quantity\": 1,\r\n      \"unitPrice\": 2199.00\r\n    }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9826/api/Sales",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Sales"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Sale Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5ZjNjNmNlNi00YTRhLTRmMmUtODZhNi0yYzkyZjM5ZTVlNTgiLCJ1bmlxdWVfbmFtZSI6IldlbGxpbmd0b24iLCJyb2xlIjoiQ3VzdG9tZXIiLCJuYmYiOjE3NjkzNjg3MzUsImV4cCI6MTc2OTM5NzUzNSwiaWF0IjoxNzY5MzY4NzM1fQ.xoZrzUs5fMelJVzu-h0_58yFeD5m6d-VLHlev355XGk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "correlationId",
+                "value": "9d53bd87-fa71-4ae9-81a5-5a1d23005e27",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"061c8654-45b9-46c8-b9a8-84b3b1934d6f\",\r\n      \"quantity\": 5,\r\n      \"unitPrice\": 1\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9826/api/Sales/70381c48-f466-448d-9b63-e599b7ea3045/SaleItem",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Sales",
+                "70381c48-f466-448d-9b63-e599b7ea3045",
+                "SaleItem"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Sale",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5ZjNjNmNlNi00YTRhLTRmMmUtODZhNi0yYzkyZjM5ZTVlNTgiLCJ1bmlxdWVfbmFtZSI6IldlbGxpbmd0b24iLCJyb2xlIjoiQ3VzdG9tZXIiLCJuYmYiOjE3NjkzNjg3MzUsImV4cCI6MTc2OTM5NzUzNSwiaWF0IjoxNzY5MzY4NzM1fQ.xoZrzUs5fMelJVzu-h0_58yFeD5m6d-VLHlev355XGk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "correlationId",
+                "value": "9d53bd87-fa71-4ae9-81a5-5a1d23005e27",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:9826/api/Sales/70381c48-f466-448d-9b63-e599b7ea3045/cancel",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9826",
+              "path": [
+                "api",
+                "Sales",
+                "70381c48-f466-448d-9b63-e599b7ea3045",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
