@@ -2,7 +2,9 @@
 
 This repository is part of the Ambev .NET developer evaluation.
 I implemented the Sales feature, covering create, list, update, and cancel operations, along with supporting infrastructure and automated validation.
-<br /><br />
+<br /><br /><br /><br /><br /><br />
+
+
 
 
 ## Main Technologies & Integrations
@@ -38,9 +40,30 @@ dotnet ef database update `
 ```  
 <img width="784" height="123" alt="image" src="https://github.com/user-attachments/assets/b90eb116-76e9-4459-bd93-5b64dee7b4ee" />  
 
+6 - Access the Postgres Database and check if the tables were created  
 
-6 - Open the swagger mapped with the port 9826 http://localhost:9826/swagger/index.html  
-<img width="1621" height="892" alt="image" src="https://github.com/user-attachments/assets/6b8b26f5-225b-4715-a56f-4986b4500894" />  
+7 - Open the swagger mapped with the port 9826 http://localhost:9826/swagger/index.html  
+
+8 - Access the api healthcheck to confirm if everything okay http://localhost:9826/health/ready
+
+9 - You may test the application using the Swagger or the Postman Collection folder:  https://github.com/wellingtonfzambelli/ambev.evaluation/tree/main/postman-tests-collection
+
+10 - I created a seed on migration to generates some data in the tables "Prodcuts", "Branches" and "Users"
+
+11 - First you should authenticate. Bellow the user/password to authenticate  
+
+```json
+{
+  "email": "wellington@test.com",
+  "password": "12345678Wm@"
+}
+```  
+12 - Now you are able to continue
+
+<br /><br /><br /><br /><br /><br />
+
+
+
 
 
 ## Sales Feature Overview  
