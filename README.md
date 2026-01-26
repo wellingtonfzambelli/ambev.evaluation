@@ -72,11 +72,11 @@ I implemented the 'CorrelationID' concept, to track/log each request individuall
 
 I used Redis for caching the product/branches lists. I used caching for getting sales content
 <img width="1883" height="949" alt="image" src="https://github.com/user-attachments/assets/12bcb4be-0abd-451a-abf1-a2c6b8abfa9a" />
+<br /><br />
+
 
 I also used Redis for Idempotency. If the user tries to create sales with the same correlationId, it's not possible  
-Fist Request
-<img width="1307" height="913" alt="image" src="https://github.com/user-attachments/assets/397a0c01-df1b-4980-99f3-8f77123ec914" />  
-
-Second Request
-<img width="1288" height="948" alt="image" src="https://github.com/user-attachments/assets/783e8fb7-4e18-4f55-89f1-8e8a14d0eada" />  
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/2bee2a78-bd09-4c1c-9c16-9e83e64b20d0" />
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/318a6bd4-c658-49f4-876f-ff6d5e0bf725" />
+<br /><br />
 
