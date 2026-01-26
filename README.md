@@ -2,9 +2,7 @@
 
 This repository is part of the Ambev .NET developer evaluation.
 I implemented the Sales feature, covering create, list, update, and cancel operations, along with supporting infrastructure and automated validation.
-<br /><br /><br /><br /><br /><br />
-
-
+<br /><br />
 
 
 ## Main Technologies & Integrations
@@ -17,7 +15,11 @@ I implemented the Sales feature, covering create, list, update, and cancel opera
 - GitHub Actions CI pipeline with build, tests, and coverage
 - XUnit for automated testing
 - Github Kanban Dashboard
-<br /><br />
+<br /><br /><br /><br /><br /><br />
+
+
+
+
 
 
 ## Tutorial to run the application
