@@ -92,7 +92,7 @@ After the dababase persistence, I'm producing the message on the RabbitMQ Queues
 <br /><br /><br />
 
 
-I also implemented the RateLimit Pattern, to avoid a sequence of unecessary request at the application. This cenario I set at maximum 2 requests per 10 seconds
+I also implemented the RateLimit Pattern, to avoid a sequence of unecessary request at the application. This cenario I set at maximum 2 requests per 10 seconds  
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/cb46cb1b-dbdc-4dc3-a7ba-ae1acc1faaf6" />
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/e6e1e440-8c03-4cd7-9cb8-3e7810b78aa0" />
 <br /><br /><br />
