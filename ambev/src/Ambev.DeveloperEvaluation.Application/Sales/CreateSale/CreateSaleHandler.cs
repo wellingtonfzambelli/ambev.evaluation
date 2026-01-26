@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
@@ -18,6 +19,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
     private readonly IMapper _mapper;
     private readonly IDistributedCache _cache;
     private readonly ISaleCreatedPublisher _publisher;
+    private readonly ICorrelationContext _correlationContext;
 
     public CreateSaleHandler
     (
@@ -27,7 +29,8 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
        IProductRepository productRepository,
        IMapper mapper,
        IDistributedCache cache,
-       ISaleCreatedPublisher publisher
+       ISaleCreatedPublisher publisher,
+       ICorrelationContext correlationContext
     )
     {
         _saleRepository = saleRepository;
@@ -37,6 +40,7 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         _mapper = mapper;
         _cache = cache;
         _publisher = publisher;
+        _correlationContext = correlationContext;
     }
 
     public async Task<CreateSaleResult> Handle
@@ -45,13 +49,13 @@ public sealed class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Creat
         CancellationToken cancellationToken
     )
     {
-        var idempotencyKey = SalesCacheKeys.Idempotency(command.SaleNumber);
+        var idempotencyKey = SalesCacheKeys.Idempotency(_correlationContext.CorrelationId);
         if (!string.IsNullOrWhiteSpace(await _cache.GetStringAsync(idempotencyKey, cancellationToken)))
         {
             throw new ValidationException(new[]
             {
                 new ValidationFailure(
-                    nameof(CreateSaleCommand.SaleNumber),
+                    nameof(_correlationContext.CorrelationId),
                     "Duplicate request is not allowed. Please wait 5 minutes.")
             });
         }
