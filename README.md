@@ -19,6 +19,13 @@ I implemented the Sales feature, covering create, list, update, and cancel opera
 
 
 ## Tutorial to run the application
+1 - Open the application on Visual Studio  
+2 - Open the Developer PowerShell
+3 - Use the docker command bellow to run the containers from docker-compose.yml  
+```shell
+  docker compose up -d
+```
+<img width="739" height="139" alt="image" src="https://github.com/user-attachments/assets/a83bf47a-b890-42f2-9a30-ae5b3df37628" />
 
 
 ## Sales Feature Overview  
