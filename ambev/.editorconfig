@@ -2,3 +2,13 @@
 
 # IDE0290: Use primary constructor
 csharp_style_prefer_primary_constructors = false
+
+# Identing braces
+csharp_new_line_before_open_brace = all
+csharp_indent_case_contents = true
+
+# Sorting dos usings
+dotnet_sort_system_directives_first = true
+
+# Removing unecessary usings
+dotnet_diagnostic.IDE0005.severity = error
