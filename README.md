@@ -99,5 +99,31 @@ This cenario I set at maximum 2 requests per 10 seconds
 <br /><br /><br />
 
 
-I created a Grafana Dashboard to monitoring: RabbitMQ Queues, Database Tables, HealtchChecks integrations, Api Resources _(CPU & Memory)_
+
+I'm collecting the metrics of the application to monitoring  
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/72febb7a-57ab-4068-98b7-dc035b5bc6a9" />
+<br /><br /><br />
+
+
+
+I created a Grafana Dashboard to monitoring: RabbitMQ Queues, Database Tables, HealtchChecks integrations, Api Resources _(CPU & Memory)_  
+Container link: http://localhost:3000/d/ambev-dashboard/ambev-dashboard?orgId=1&from=now-5m&to=now&timezone=browser&refresh=5s  
 <img width="1859" height="998" alt="image" src="https://github.com/user-attachments/assets/9187bd17-046f-48be-962f-0785b5fca8af" />
+<br /><br /><br />
+
+
+I implemented some tests focused on the 'Sales Feature' using XUnit  
+<img width="561" height="372" alt="image" src="https://github.com/user-attachments/assets/68f18cb9-c1e2-4cb1-8c5c-85ff1522ca54" />
+<br /><br /><br />
+
+
+I created a Continous Integration Pipeline on the Github Actions to restore, build and test the application automatically every merge
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/e5075d57-cab4-45de-9890-559e8906e4d8" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/65b0cc10-92f7-435f-a897-136f9d25e5f1" />
+<br /><br /><br />
+
+
+The pipeline generates a global test report for downloading.  
+Here is a pipeline link example: https://github.com/wellingtonfzambelli/ambev.evaluation/actions/runs/21365841531/job/61497242395  
+<img width="1244" height="930" alt="image" src="https://github.com/user-attachments/assets/8c865fd3-53d0-48a0-aff6-44f8ce8163f3" />
+<img width="1648" height="929" alt="image" src="https://github.com/user-attachments/assets/1894bc9b-eca9-4c39-a1fc-302324add75a" />
