@@ -20,12 +20,27 @@ I implemented the Sales feature, covering create, list, update, and cancel opera
 
 ## Tutorial to run the application
 1 - Open the application on Visual Studio  
-2 - Open the Developer PowerShell
+2 - Open the Developer PowerShell  
 3 - Use the docker command bellow to run the containers from docker-compose.yml  
 ```shell
   docker compose up -d
 ```
-<img width="739" height="139" alt="image" src="https://github.com/user-attachments/assets/a83bf47a-b890-42f2-9a30-ae5b3df37628" />
+<img width="739" height="139" alt="image" src="https://github.com/user-attachments/assets/a83bf47a-b890-42f2-9a30-ae5b3df37628" />  
+
+4 - Open the Docker Desktop e check if all the containers are running  
+<img width="500"  alt="image" src="https://github.com/user-attachments/assets/f24ad0df-3a50-48c2-a65d-1068098dfd26" />  
+
+5 - Execute the Migration command bellow to generate the tables on the Postgres Database
+```shell
+dotnet ef database update `
+  --project src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj `
+  --startup-project src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj
+```  
+<img width="784" height="123" alt="image" src="https://github.com/user-attachments/assets/b90eb116-76e9-4459-bd93-5b64dee7b4ee" />  
+
+
+6 - Open the swagger mapped with the port 9826 http://localhost:9826/swagger/index.html  
+<img width="1621" height="892" alt="image" src="https://github.com/user-attachments/assets/6b8b26f5-225b-4715-a56f-4986b4500894" />  
 
 
 ## Sales Feature Overview  
