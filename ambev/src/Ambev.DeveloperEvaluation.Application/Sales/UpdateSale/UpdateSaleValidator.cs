@@ -2,9 +2,6 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
-/// <summary>
-/// Validator for UpdateSaleCommand.
-/// </summary>
 public sealed class UpdateSaleCommandValidator : AbstractValidator<UpdateSaleCommand>
 {
     public UpdateSaleCommandValidator()

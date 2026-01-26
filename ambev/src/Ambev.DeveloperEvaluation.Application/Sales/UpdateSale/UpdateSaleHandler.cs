@@ -82,6 +82,8 @@ public sealed class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, Updat
         await _cache.RemoveAsync(SalesCacheKeys.GetById(sale.Id), cancellationToken);
         await _publisher.PublishAsync(sale.Id, cancellationToken);
 
-        return _mapper.Map<UpdateSaleResult>(sale);
+        var result = _mapper.Map<UpdateSaleResult>(sale);
+        result.Id = sale.Id;
+        return result;
     }
 }

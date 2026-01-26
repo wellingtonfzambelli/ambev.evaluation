@@ -48,6 +48,7 @@ public sealed class GetSaleHandler : IRequestHandler<GetSaleQuery, GetSaleResult
             });
 
         var result = _mapper.Map<GetSaleResult>(sale);
+        result.Id = sale.Id;
 
         await _cache.SetStringAsync(
             cacheKey,
