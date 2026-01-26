@@ -1,8 +1,5 @@
 namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 
-/// <summary>
-/// Represents a sale item in the list response.
-/// </summary>
 public sealed class ListSalesResult
 {
     public Guid Id { get; set; }

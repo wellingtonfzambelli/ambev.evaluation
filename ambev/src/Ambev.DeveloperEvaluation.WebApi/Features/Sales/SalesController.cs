@@ -100,12 +100,8 @@ public sealed class SalesController : BaseController
     {
         var response = await _mediator.Send(new ListSalesQuery(), cancellationToken);
 
-        return Ok(new ApiResponseWithData<IEnumerable<ListSalesResponse>>
-        {
-            Success = true,
-            Message = "Sales retrieved successfully",
-            Data = _mapper.Map<IEnumerable<ListSalesResponse>>(response)
-        });
+        // Use BaseController.Ok to let the base wrapper produce the standardized response
+        return base.Ok(_mapper.Map<IEnumerable<ListSalesResponse>>(response));
     }
 
 

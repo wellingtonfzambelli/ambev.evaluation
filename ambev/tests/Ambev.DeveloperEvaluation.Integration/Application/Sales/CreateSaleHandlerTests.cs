@@ -2,6 +2,7 @@ using System.Text;
 using Ambev.DeveloperEvaluation.Application.Sales;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.EnqueueSale;
+using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
@@ -26,6 +27,8 @@ public sealed class CreateSaleHandlerTests
         var productRepository = Substitute.For<IProductRepository>();
         var cache = Substitute.For<IDistributedCache>();
         var publisher = Substitute.For<ISaleCreatedPublisher>();
+        var correlationContext = Substitute.For<ICorrelationContext>();
+        correlationContext.CorrelationId.Returns(Guid.NewGuid().ToString());
 
         var mapper = BuildMapper();
         var handler = new CreateSaleHandler(
@@ -35,7 +38,8 @@ public sealed class CreateSaleHandlerTests
             productRepository,
             mapper,
             cache,
-            publisher);
+            publisher,
+            correlationContext);
 
         var customerId = Guid.NewGuid();
         var branchId = Guid.NewGuid();
@@ -73,7 +77,7 @@ public sealed class CreateSaleHandlerTests
                 return Task.FromResult(sale);
             });
 
-        cache.GetAsync(SalesCacheKeys.Idempotency(saleNumber), Arg.Any<CancellationToken>())
+        cache.GetAsync(SalesCacheKeys.Idempotency(correlationContext.CorrelationId!), Arg.Any<CancellationToken>())
             .Returns((byte[]?)null);
 
         // Act
@@ -85,7 +89,7 @@ public sealed class CreateSaleHandlerTests
             .CreateAsync(Arg.Any<Sale>(), Arg.Any<CancellationToken>());
         await cache.Received(1)
             .SetAsync(
-                SalesCacheKeys.Idempotency(saleNumber),
+                SalesCacheKeys.Idempotency(correlationContext.CorrelationId!),
                 Arg.Is<byte[]>(value => Encoding.UTF8.GetString(value) == "1"),
                 Arg.Any<DistributedCacheEntryOptions>(),
                 Arg.Any<CancellationToken>());
@@ -103,6 +107,8 @@ public sealed class CreateSaleHandlerTests
         var productRepository = Substitute.For<IProductRepository>();
         var cache = Substitute.For<IDistributedCache>();
         var publisher = Substitute.For<ISaleCreatedPublisher>();
+        var correlationContext = Substitute.For<ICorrelationContext>();
+        correlationContext.CorrelationId.Returns(Guid.NewGuid().ToString());
 
         var mapper = BuildMapper();
         var handler = new CreateSaleHandler(
@@ -112,7 +118,8 @@ public sealed class CreateSaleHandlerTests
             productRepository,
             mapper,
             cache,
-            publisher);
+            publisher,
+            correlationContext);
 
         var saleNumber = _faker.Random.AlphaNumeric(10);
         var command = new CreateSaleCommand
@@ -126,7 +133,7 @@ public sealed class CreateSaleHandlerTests
             }
         };
 
-        cache.GetAsync(SalesCacheKeys.Idempotency(saleNumber), Arg.Any<CancellationToken>())
+        cache.GetAsync(SalesCacheKeys.Idempotency(correlationContext.CorrelationId!), Arg.Any<CancellationToken>())
             .Returns(Encoding.UTF8.GetBytes("1"));
 
         // Act

@@ -1,8 +1,5 @@
 namespace Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 
-/// <summary>
-/// Result model for sale details.
-/// </summary>
 public sealed class GetSaleResult
 {
     public Guid Id { get; set; }
