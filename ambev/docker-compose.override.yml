@@ -1,0 +1,7 @@
+services:
+  ambev.developerevaluation.webapi:
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=ambev.developerevaluation.database;Port=5432;Database=developer_evaluation;Username=developer;Password=ev@luAt10n
+    ports:
+      - "8080:8080"

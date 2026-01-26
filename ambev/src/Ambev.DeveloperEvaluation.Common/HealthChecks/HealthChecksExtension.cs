@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+using System.Net.Mime;
+using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using System.Net.Mime;
 
 namespace Ambev.DeveloperEvaluation.Common.HealthChecks;
 
@@ -42,9 +44,44 @@ public static class HealthChecksExtension
     /// </example>
     public static void AddBasicHealthChecks(this WebApplicationBuilder builder)
     {
-        builder.Services.AddHealthChecks()
+        var postgresConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+        var redisConfiguration = builder.Configuration.GetSection("Redis").GetValue<string>("Configuration");
+
+        var rabbitHost = builder.Configuration.GetSection("RabbitMq").GetValue<string>("HostName");
+        var rabbitUser = builder.Configuration.GetSection("RabbitMq").GetValue<string>("UserName");
+        var rabbitPass = builder.Configuration.GetSection("RabbitMq").GetValue<string>("Password");
+
+        var seqUrl = builder.Configuration.GetSection("Seq").GetValue<string>("Url");
+
+
+        var healthChecks = builder.Services.AddHealthChecks()
             .AddCheck("Liveness", () => HealthCheckResult.Healthy(), tags: ["liveness"])
             .AddCheck("Readiness", () => HealthCheckResult.Healthy(), tags: ["readiness"]);
+
+        if (!string.IsNullOrWhiteSpace(postgresConnection))
+            healthChecks.AddNpgSql(postgresConnection, name: "postgres", tags: ["readiness"]);
+
+        if (!string.IsNullOrWhiteSpace(redisConfiguration))
+            healthChecks.AddRedis(redisConfiguration, name: "redis", tags: ["readiness"]);
+
+        if (!string.IsNullOrWhiteSpace(rabbitHost) &&
+            !string.IsNullOrWhiteSpace(rabbitUser) &&
+            !string.IsNullOrWhiteSpace(rabbitPass))
+        {
+            var user = Uri.EscapeDataString(rabbitUser);
+            var pass = Uri.EscapeDataString(rabbitPass);
+            if (Uri.TryCreate($"amqp://{user}:{pass}@{rabbitHost}/", UriKind.Absolute, out var rabbitUri))
+            {
+                healthChecks.AddRabbitMQ(rabbitUri, name: "rabbitmq", tags: ["readiness"]);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(seqUrl) &&
+            Uri.TryCreate(seqUrl, UriKind.Absolute, out var seqUri))
+        {
+            healthChecks.AddUrlGroup(seqUri, name: "seq", tags: ["readiness"]);
+        }
     }
 
     /// <summary>
@@ -125,7 +162,11 @@ public static class HealthChecksExtension
                     }),
                 };
                 context.Response.ContentType = MediaTypeNames.Application.Json;
-                await context.Response.WriteAsJsonAsync(result);
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+                await context.Response.WriteAsync(JsonSerializer.Serialize(result, jsonOptions));
             },
         };
 
