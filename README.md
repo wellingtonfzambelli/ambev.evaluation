@@ -21,4 +21,7 @@ I implemented the Sales feature, covering create, list, update, and cancel opera
 ## Tutorial to run the application
 
 
-## 
+## Sales Feature Overview  
+I Used Github Kanban Dashboard to organize my tasks  
+https://github.com/users/wellingtonfzambelli/projects/4/views/1  
+<img width="1477" height="954" alt="image" src="https://github.com/user-attachments/assets/26a7700f-81c2-4645-9bf8-a62363a3fc33" />
