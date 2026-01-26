@@ -45,8 +45,7 @@ http://localhost:9826/swagger/index.html
 <br /><br />
 
 
-I confirmed if the HealthChecks API are Healthly on the container endpoint bellow
-http://localhost:9826/health/ready
+I confirmed if the HealthChecks API are Healthly on the container endpoint http://localhost:9826/health/ready
 <img width="813" height="688" alt="image" src="https://github.com/user-attachments/assets/9e0c007b-894f-4b01-b6b7-bd98198584c3" />
 <br /><br />
 
